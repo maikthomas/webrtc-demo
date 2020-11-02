@@ -1,9 +1,11 @@
 const webpack = require('webpack');
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const config = {
-  entry: './src/index.js',
+  entry: [
+    'react-hot-loader/patch',
+    './src/index.js'
+  ],
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
@@ -11,24 +13,24 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         use: 'babel-loader',
         exclude: /node_modules/
       }
     ]
   },
-  devServer: {
-    contentBase: path.join(__dirname, 'dist'),
-    compress: true,
-    port: 9000
+  resolve: {
+    extensions: [
+      '.js',
+      '.jsx'
+    ],
+    alias: {
+      'react-dom': '@hot-loader/react-dom'
+    }
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      appMountId: 'app',
-      filename: 'index.html',
-      template: 'index.html',
-    })
-  ]
+  devServer: {
+    contentBase: './dist'
+  }
 };
 
 module.exports = config;
