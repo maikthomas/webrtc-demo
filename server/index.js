@@ -10,7 +10,7 @@ let client1;
 let client2;
 
 const getOtherSessionId = (id) => {
-  return id === client1.id ? client2.id : client1.id;
+  return id === client1?.id ? client2?.id : client1?.id;
 }
 
 io.on('connection', (socket) => {
