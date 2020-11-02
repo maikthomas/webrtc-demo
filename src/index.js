@@ -30,9 +30,6 @@ const makeCall = async (withOffer) => {
   const remoteVideo = document.querySelector("#remoteVideo");
   const localVideo = document.getElementById("localVideo");
   localVideo.addEventListener("loadedmetadata", function () {
-    console.log(
-      `Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`
-    );
     localVideo.play();
   });
   localVideo.srcObject = localStream;
