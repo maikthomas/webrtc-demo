@@ -1,8 +1,10 @@
 import io from 'socket.io-client';
 const host = document.location.href.split('://')[1].split('/')[0];
-// const host = "localhost:8000";
+const protocol =
+  typeof SOCKET_PROTOCOL === 'undefined' ? 'https' : SOCKET_PROTOCOL;
+const url = `${protocol}://${host}`;
 export const openSocket = () => {
-  const socket = io(`https://${host}`, {
+  const socket = io(url, {
     path: '/signalling',
     reconnectionDelayMax: 10000,
     secure: true,
