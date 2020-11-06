@@ -14,13 +14,14 @@
     "clean": "rm dist/bundle.js",
     "dev": "webpack serve -hot --mode development",
     "start": "node index.js",
-    "build": "webpack --mode development",
-    "build-prod": "webpack --mode production"
+    "build-dev": "webpack --mode development",
+    "build": "webpack --mode production"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/styles": "^4.10.0",
     "eventemitter3": "^4.0.7",
     "express": "^4.17.1",
     "react": "^17.0.1",

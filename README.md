@@ -5,7 +5,7 @@ A simple project to demo a 1:1 video call with WebRTC.
 Consisting of:
 
 - Frontend with React
-  Losely following the steps described here: https://webrtc.org/getting-started/overview
+  loosely following the steps described here: https://webrtc.org/getting-started/overview
 - A barebones signalling server in node using socket.io
   Implementing the flow described in this MDN doc: https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling#Signaling_transaction_flow
 
@@ -15,7 +15,7 @@ Considerations:
 - When the first two clients connect, they are assigned a role, client1 or client2.
 - In the frontend, the connection logic is different for client1 and client2 (client1 makes the offer, client2 responds etc)
 - The signalling server has no persistence or retry logic for the offers, it just passes the message to the other client
-- This demo does not handle any reconnection, disconnection or other real world cal logic
+- This demo does not handle any reconnection, disconnection or other real world call logic
 
 ## Building and running on localhost
 
@@ -26,14 +26,15 @@ yarn
 ```
 
 run locally:
+In one terminal start the web app dev server on :8080
 
 ```sh
-# In one terminal start the web app on :8080
 yarn dev
 ```
 
+In another start the signalling server on :8000 (this also serves the statics but without hot reload)
+
 ```sh
-# In another start the signalling server on :8000
 yarn start
 ```
 

@@ -1,28 +1,39 @@
 import React from 'react';
 import { hot } from 'react-hot-loader/root';
 import Controls from './Controls';
+import { makeStyles } from '@material-ui/core/styles';
 
-const localVideoStyle = {
-  position: 'absolute',
-  top: '40px',
-  left: '40px',
-  width: 213,
-  height: 160,
-  borderRadius: 10,
-  boxShadow: '0 2px 5px 3px rgba(0,0,0,0.6)',
-  backgroundColor: 'black',
-  zIndex: 100,
-};
-
-const remoteVideoStyle = {
-  position: 'absolute',
-  height: '100%',
-  width: '100%',
-};
+const useStyles = makeStyles({
+  localVideo: {
+    position: 'absolute',
+    top: '40px',
+    left: '40px',
+    width: 213,
+    height: 160,
+    borderRadius: 10,
+    boxShadow: '0 2px 5px 3px rgba(0,0,0,0.6)',
+    backgroundColor: 'black',
+    zIndex: 100,
+  },
+  remoteVideo: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '100vh',
+    width: '100%',
+    position: 'relative',
+  },
+});
 
 const App = ({ eventEmitter }) => {
   const [isMuted, setIsMuted] = React.useState(false);
   const [isVideoEnabled, setIsVideoEnabled] = React.useState(true);
+  const classes = useStyles();
 
   React.useEffect(() => {
     eventEmitter.on('micToggled', ({ isEnabled }) => {
@@ -39,18 +50,9 @@ const App = ({ eventEmitter }) => {
   const toggleMute = () => eventEmitter.emit('toggleMic');
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        height: '100vh',
-        width: '100%',
-        position: 'relative',
-      }}
-    >
-      <video id="localVideo" style={localVideoStyle} />
-      <video id="remoteVideo" style={remoteVideoStyle} />
+    <div className={classes.container}>
+      <video id="localVideo" className={classes.localVideo} />
+      <video id="remoteVideo" className={classes.remoteVideo} />
       <Controls
         toggleMute={toggleMute}
         isMuted={isMuted}

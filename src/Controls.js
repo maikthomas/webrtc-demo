@@ -5,35 +5,38 @@ import MicOffIcon from '@material-ui/icons/MicOff';
 import MicIcon from '@material-ui/icons/Mic';
 import VideocamIcon from '@material-ui/icons/Videocam';
 import VideocamOffIcon from '@material-ui/icons/VideocamOff';
+import { makeStyles } from '@material-ui/core/styles';
 
-const controlStyle = {
-  position: 'absolute',
-  bottom: 0,
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  width: '400px',
-  height: '110px',
-  left: '50%',
-  margin: '0 0 0 -150px',
-};
-
-const iconStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: 65,
-  width: 65,
-  borderRadius: 30,
-  backgroundColor: 'white',
-  margin: '0 10px',
-  border: '1px solid grey',
-};
+const useStyles = makeStyles({
+  control: {
+    position: 'absolute',
+    bottom: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '400px',
+    height: '110px',
+    left: '50%',
+    margin: '0 0 0 -150px',
+  },
+  icon: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 65,
+    width: 65,
+    borderRadius: 30,
+    backgroundColor: 'white',
+    margin: '0 10px',
+    border: '1px solid grey',
+  },
+});
 
 const Controls = ({ isMuted, toggleMute, isVideoEnabled, toggleVideo }) => {
+  const classes = useStyles();
   return (
-    <div style={controlStyle}>
-      <div style={iconStyle}>
+    <div className={classes.control}>
+      <div className={classes.icon}>
         <IconButton
           color={isMuted ? 'secondary' : 'primary'}
           aria-label="toggle-mic"
@@ -46,7 +49,7 @@ const Controls = ({ isMuted, toggleMute, isVideoEnabled, toggleVideo }) => {
           )}
         </IconButton>
       </div>
-      <div style={iconStyle}>
+      <div className={classes.icon}>
         <IconButton
           color={isVideoEnabled ? 'primary' : 'secondary'}
           aria-label="toggle-mic"
