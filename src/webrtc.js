@@ -5,11 +5,9 @@ const initLocalVideo = async () => {
   });
 
   const localVideo = document.getElementById("localVideo");
-
+  localVideo.autoplay = true;
+  localVideo.muted = true;
   localVideo.srcObject = localStream;
-  localVideo.addEventListener("loadedmetadata", function () {
-    localVideo.play();
-  });
 
   return {
     localVideo,
