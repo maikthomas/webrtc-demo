@@ -20,12 +20,12 @@ run locally:
 
 ```sh
 # In one terminal start the web app on :8080
-yarn start
+yarn dev
 ```
 
 ```sh
 # In another start the signalling server on :8000
-yarn start-ws
+yarn start
 ```
 
 ## Credits

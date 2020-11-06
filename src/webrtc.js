@@ -43,6 +43,7 @@ export const start = async (socket) => {
   });
 
   const startCallAsClient1 = async () => {
+    console.log("starting call as 1");
     const { remoteVideo } = initRemoteVideo();
     peerConnection.addEventListener("track", async (event) => {
       // remoteStream.addTrack(event.track, remoteStream);
@@ -103,11 +104,19 @@ export const start = async (socket) => {
     });
   };
 
+  console.log("add clients ready event");
+
   socket.on("clientsReady", (client) => {
+    console.log("receive clients ready event");
     if (client === "client1") {
       startCallAsClient1();
     } else if (client === "client2") {
       startCallAsClient2();
     }
   });
+
+  setTimeout(() => {
+    console.log("send client ready");
+    socket.emit("client-ready", "empty");
+  }, 5000);
 };

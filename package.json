@@ -6,11 +6,15 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "14.x",
+    "yarn": "1.x"
+  },
   "scripts": {
     "clean": "rm dist/bundle.js",
-    "start": "webpack serve -hot --mode development",
-    "start-ws": "node server/index.js",
-    "build-dev": "webpack --mode development",
+    "dev": "webpack serve -hot --mode development",
+    "start": "node index.js",
+    "build": "webpack --mode development",
     "build-prod": "webpack --mode production"
   },
   "dependencies": {
