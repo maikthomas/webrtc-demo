@@ -1,10 +1,36 @@
+const toggleAudio = (stream, eventEmitter) => () => {
+  if (!stream) {
+    console.error('stream not available');
+    return;
+  }
+  const newEnabledState = !stream.getAudioTracks()[0].enabled;
+  stream.getAudioTracks()[0].enabled = newEnabledState;
+
+  eventEmitter.emit('micToggled', {
+    isEnabled: newEnabledState,
+  });
+};
+
+const toggleVideo = (stream, eventEmitter) => () => {
+  if (!stream) {
+    console.error('stream not available');
+    return;
+  }
+  const newEnabledState = !stream.getVideoTracks()[0].enabled;
+  stream.getVideoTracks()[0].enabled = newEnabledState;
+
+  eventEmitter.emit('videoToggled', {
+    isEnabled: newEnabledState,
+  });
+};
+
 const initLocalVideo = async () => {
   const localStream = await navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true,
   });
 
-  const localVideo = document.getElementById("localVideo");
+  const localVideo = document.getElementById('localVideo');
   localVideo.autoplay = true;
   localVideo.muted = true;
   localVideo.srcObject = localStream;
@@ -17,16 +43,18 @@ const initLocalVideo = async () => {
 
 const initRemoteVideo = () => {
   const remoteStream = new MediaStream();
-  const remoteVideo = document.querySelector("#remoteVideo");
+  const remoteVideo = document.querySelector('#remoteVideo');
   remoteVideo.srcObject = remoteStream;
   return { remoteStream, remoteVideo };
 };
 
-export const start = async (socket) => {
+export const start = async (socket, eventEmitter) => {
   const configuration = {
-    iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
   };
   const { localStream } = await initLocalVideo();
+  eventEmitter.on('toggleMic', toggleAudio(localStream, eventEmitter));
+  eventEmitter.on('toggleVideo', toggleVideo(localStream, eventEmitter));
 
   const peerConnection = new RTCPeerConnection(configuration);
 
@@ -34,89 +62,91 @@ export const start = async (socket) => {
     peerConnection.addTrack(track, localStream);
   });
 
-  socket.on("new-ice-candidate", (candidate) => {
+  socket.on('new-ice-candidate', (candidate) => {
     if (candidate) {
       peerConnection.addIceCandidate(candidate).catch((e) => {
-        console.error("Error adding received ice candidate", e);
+        console.error('Error adding received ice candidate', e);
       });
     }
   });
 
   const startCallAsClient1 = async () => {
-    console.log("starting call as 1");
+    console.log('starting call as 1');
     const { remoteVideo } = initRemoteVideo();
-    peerConnection.addEventListener("track", async (event) => {
+    peerConnection.addEventListener('track', async (event) => {
       // remoteStream.addTrack(event.track, remoteStream);
       remoteVideo.srcObject = event.streams[0];
-      remoteVideo.play();
+      remoteVideo.autoplay = true;
+
+      // remoteVideo.play();
     });
 
-    peerConnection.addEventListener("icecandidate", (event) => {
+    peerConnection.addEventListener('icecandidate', (event) => {
       if (event.candidate) {
-        socket.emit("new-ice-candidate", event.candidate);
+        socket.emit('new-ice-candidate', event.candidate);
       }
     });
-    socket.on("video-answer", (answer) => {
+    socket.on('video-answer', (answer) => {
       const remoteDesc = new RTCSessionDescription(answer);
       peerConnection.setRemoteDescription(remoteDesc).then(() => {
-        console.log("set remote");
+        console.log('set remote');
       });
     });
 
     peerConnection.createOffer().then((offer) => {
       peerConnection.setLocalDescription(offer).then(() => {
-        socket.emit("video-offer", offer);
-        console.log("set local");
+        socket.emit('video-offer', offer);
+        console.log('set local');
       });
     });
   };
 
   const startCallAsClient2 = async () => {
     const { remoteVideo } = initRemoteVideo();
-    peerConnection.addEventListener("track", async (event) => {
-      console.log("adding remote track", event.track);
+    peerConnection.addEventListener('track', async (event) => {
+      console.log('adding remote track', event.track);
       // remoteStream.addTrack(event.track, remoteStream);
       remoteVideo.srcObject = event.streams[0];
       remoteVideo.play();
     });
 
-    peerConnection.addEventListener("icecandidate", (event) => {
+    peerConnection.addEventListener('icecandidate', (event) => {
       if (event.candidate) {
-        socket.emit("new-ice-candidate", event.candidate);
+        socket.emit('new-ice-candidate', event.candidate);
       }
     });
-    socket.on("video-answer", (answer) => {
+    socket.on('video-answer', (answer) => {
       const remoteDesc = new RTCSessionDescription(answer);
       peerConnection.setRemoteDescription(remoteDesc).then(() => {
-        console.log("set remote");
+        console.log('set remote');
       });
     });
 
-    socket.on("video-offer", (offer) => {
+    socket.on('video-offer', (offer) => {
       peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-      console.log("set remote");
+      console.log('set remote');
       peerConnection.createAnswer().then((answer) => {
         peerConnection.setLocalDescription(answer).then(() => {
-          console.log("set local");
-          socket.emit("video-answer", answer);
+          console.log('set local');
+          socket.emit('video-answer', answer);
         });
       });
     });
   };
 
-  console.log("add clients ready event");
+  console.log('add clients ready event');
 
-  socket.on("clientsReady", (client) => {
-    console.log("receive clients ready event");
-    if (client === "client1") {
+  socket.on('clientsReady', (client) => {
+    console.log('receive clients ready event');
+    if (client === 'client1') {
       startCallAsClient1();
-    } else if (client === "client2") {
+    } else if (client === 'client2') {
       startCallAsClient2();
     }
   });
 
   setTimeout(() => {
-    console.log("send client ready");
-    socket.emit("client-ready", "empty");
+    console.log('send client ready');
+    socket.emit('client-ready', 'empty');
   }, 5000);
 };
