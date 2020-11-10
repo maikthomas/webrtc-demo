@@ -77,8 +77,6 @@ export const start = async (socket, eventEmitter) => {
       // remoteStream.addTrack(event.track, remoteStream);
       remoteVideo.srcObject = event.streams[0];
       remoteVideo.autoplay = true;
-
-      // remoteVideo.play();
     });
 
     peerConnection.addEventListener('icecandidate', (event) => {
@@ -107,7 +105,7 @@ export const start = async (socket, eventEmitter) => {
       console.log('adding remote track', event.track);
       // remoteStream.addTrack(event.track, remoteStream);
       remoteVideo.srcObject = event.streams[0];
-      remoteVideo.play();
+      remoteVideo.autoplay = true;
     });
 
     peerConnection.addEventListener('icecandidate', (event) => {
