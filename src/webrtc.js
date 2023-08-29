@@ -1,3 +1,8 @@
+import {
+  BlurRadius,
+  createVonageMediaProcessor,
+} from '@vonage/ml-transformers';
+
 const toggleAudio = (stream, eventEmitter) => () => {
   if (!stream) {
     console.error('stream not available');
@@ -57,9 +62,24 @@ export const start = async (socket, eventEmitter) => {
   eventEmitter.on('toggleVideo', toggleVideo(localStream, eventEmitter));
 
   const peerConnection = new RTCPeerConnection(configuration);
+  const config = {
+    transformerType: 'BackgroundBlur',
+    radius: BlurRadius.High,
+  };
+  const processor = await createVonageMediaProcessor(config);
+  const connector = processor.getConnector();
+
+  const [videoTrack] = localStream.getVideoTracks();
+  // const [audioTrack] = localStream.getAudioTracks();
+
+  const newVideoTrack = await connector.setTrack(videoTrack);
+  localStream.removeTrack(videoTrack);
+  localStream.addTrack(newVideoTrack);
 
   localStream.getTracks().forEach((track) => {
     peerConnection.addTrack(track, localStream);
+    // peerConnection.addTrack(audioTrack, localStream);
+    // peerConnection.addTrack(newVideoTrack, localStream);
   });
 
   socket.on('new-ice-candidate', (candidate) => {
